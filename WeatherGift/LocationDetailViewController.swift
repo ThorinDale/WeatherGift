@@ -7,6 +7,13 @@
 
 import UIKit
 
+private let dateFormatter: DateFormatter = {
+    print("I JUST CREATED A DATE FORMATTER!")
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "EEEE, MMM d, h:mm aaa"
+    return dateFormatter
+}()
+
 class LocationDetailViewController: UIViewController {
 
     @IBOutlet weak var dateLabel: UILabel!
@@ -34,10 +41,13 @@ class LocationDetailViewController: UIViewController {
         
         weatherDetail.getData {
             DispatchQueue.main.async {
-                self.dateLabel.text = self.weatherDetail.timezone
+                dateFormatter.timeZone = TimeZone(identifier: self.weatherDetail.timezone)
+                let usableDate = Date(timeIntervalSince1970: self.weatherDetail.currentTime)
+                self.dateLabel.text = dateFormatter.string(from: usableDate)
                 self.placeLabel.text = self.weatherDetail.name
                 self.temperatureLabel.text = "\(self.weatherDetail.temperature)"
                 self.summaryLabel.text = self.weatherDetail.summary
+                self.imageView.image = UIImage(named: self.weatherDetail.dayIcon)
             }
         }
     }
